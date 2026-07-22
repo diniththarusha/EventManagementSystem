@@ -1,0 +1,21 @@
+@page
+@model EventManagementSystem.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+<form method="post">
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+
+    <label asp-for="Email"></label>
+    <input asp-for="Email" />
+
+    <label asp-for="Password"></label>
+    <input asp-for="Password" type="password" />
+
+    <p><button type="submit" class="btn">Login</button></p>
+</form>
+
+<p>No account? <a asp-page="Register">Register here</a></p>

@@ -1,0 +1,59 @@
+@page
+@model EventManagementSystem.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="eyebrow">Admin</div>
+<h1>Dashboard</h1>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-value">@Model.Stats.TotalEvents</div>
+        <div class="stat-label">Total events</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">@Model.Stats.UpcomingEvents</div>
+        <div class="stat-label">Upcoming</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">@Model.Stats.TotalRegistrations</div>
+        <div class="stat-label">Registered</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">@Model.Stats.TotalWaitlisted</div>
+        <div class="stat-label">Waitlisted</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">@Model.Stats.TotalCheckedIn</div>
+        <div class="stat-label">Checked in</div>
+    </div>
+</div>
+
+<h2>All Events</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Registered</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var e in Model.Events)
+    {
+        <tr>
+            <td>@e.Title</td>
+            <td>@e.EventDate.ToString("dd MMM yyyy, h:mm tt")</td>
+            <td>@e.RegisteredCount / @e.Capacity</td>
+            <td>@e.Status</td>
+            <td>
+                <a asp-page="/Events/Details" asp-route-id="@e.EventId">View</a> ·
+                <a asp-page="/Registrations/Attendees" asp-route-eventId="@e.EventId">Attendees</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

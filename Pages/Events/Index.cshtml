@@ -1,0 +1,47 @@
+@page
+@model EventManagementSystem.Pages.Events.IndexModel
+@{
+    ViewData["Title"] = "Events";
+}
+
+<div class="eyebrow">SLIC Life</div>
+<h1>Upcoming Events</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <p><a class="btn" asp-page="Create">+ New Event</a></p>
+}
+
+@if (!Model.Events.Any())
+{
+    <p>No events scheduled yet.</p>
+}
+
+<div class="ticket-grid">
+@foreach (var e in Model.Events)
+{
+    <a class="ticket" asp-page="Details" asp-route-id="@e.EventId">
+        <div class="ticket-main">
+            <div class="ticket-title">@e.Title</div>
+            <div class="ticket-meta">@e.EventDate.ToString("dd MMM yyyy, h:mm tt")</div>
+            <div class="ticket-meta">@e.Venue</div>
+        </div>
+        <div class="ticket-perf"></div>
+        <div class="ticket-stub">
+            <span class="capacity">@e.RegisteredCount / @e.Capacity registered</span>
+            @if (e.Status == "Scheduled")
+            {
+                <span class="badge badge-registered">Scheduled</span>
+            }
+            else if (e.Status == "Cancelled")
+            {
+                <span class="badge" style="background:#F6E1DC; color:#C1503D;">Cancelled</span>
+            }
+            else
+            {
+                <span class="badge badge-checked-in">Completed</span>
+            }
+        </div>
+    </a>
+}
+</div>

@@ -1,0 +1,55 @@
+@page "{id:int}"
+@model EventManagementSystem.Pages.Events.DetailsModel
+@{
+    ViewData["Title"] = Model.Event.Title;
+}
+
+<h1>@Model.Event.Title</h1>
+
+<p><strong>Date:</strong> @Model.Event.EventDate.ToString("dd MMM yyyy, h:mm tt")</p>
+<p><strong>Venue:</strong> @Model.Event.Venue</p>
+<p><strong>Capacity:</strong> @Model.Event.RegisteredCount / @Model.Event.Capacity registered</p>
+<p><strong>Status:</strong> @Model.Event.Status</p>
+<p>@Model.Event.Description</p>
+
+@if (!User.Identity!.IsAuthenticated)
+{
+    <p><a asp-page="/Account/Login">Log in</a> to register for this event.</p>
+}
+else if (Model.MyRegistration is null)
+{
+    @if (Model.Event.Status == "Scheduled")
+    {
+        <form method="post">
+            <input type="hidden" name="eventId" value="@Model.Event.EventId" />
+            <button type="submit" class="btn">Register</button>
+        </form>
+    }
+}
+else
+{
+    <p>
+        You are
+        @if (Model.MyRegistration.Status == "Registered")
+        {
+            <span class="badge badge-registered">Registered</span>
+        }
+        else if (Model.MyRegistration.Status == "Waitlisted")
+        {
+            <span class="badge badge-waitlisted">Waitlisted</span>
+        }
+        for this event.
+        <a asp-page="/Registrations/MyEvents">View your QR ticket</a>
+    </p>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a class="btn" asp-page="Edit" asp-route-id="@Model.Event.EventId">Edit</a>
+        <a class="btn btn-danger" asp-page="Delete" asp-route-id="@Model.Event.EventId">Delete</a>
+        <a class="btn btn-secondary" asp-page="/Registrations/Attendees" asp-route-eventId="@Model.Event.EventId">View Attendees</a>
+    </p>
+}
+
+<a asp-page="Index">Back to events</a>

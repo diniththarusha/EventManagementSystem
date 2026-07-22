@@ -1,0 +1,38 @@
+@page "{id:int}"
+@model EventManagementSystem.Pages.Events.EditModel
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<h1>Edit Event</h1>
+
+<form method="post">
+    <input type="hidden" asp-for="Event.EventId" />
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+
+    <label asp-for="Event.Title"></label>
+    <input asp-for="Event.Title" />
+
+    <label asp-for="Event.Description"></label>
+    <textarea asp-for="Event.Description" rows="4"></textarea>
+
+    <label asp-for="Event.Venue"></label>
+    <input asp-for="Event.Venue" />
+
+    <label asp-for="Event.EventDate"></label>
+    <input asp-for="Event.EventDate" type="datetime-local" />
+
+    <label asp-for="Event.Capacity"></label>
+    <input asp-for="Event.Capacity" type="number" min="1" />
+
+    <label asp-for="Event.Status"></label>
+    <select asp-for="Event.Status">
+        <option value="Scheduled">Scheduled</option>
+        <option value="Cancelled">Cancelled</option>
+        <option value="Completed">Completed</option>
+    </select>
+
+    <p><button type="submit" class="btn">Save changes</button></p>
+</form>
+
+<a asp-page="Index">Back to events</a>

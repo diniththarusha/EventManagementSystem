@@ -1,0 +1,30 @@
+@page
+@model EventManagementSystem.Pages.Events.CreateModel
+@{
+    ViewData["Title"] = "New Event";
+}
+
+<h1>New Event</h1>
+
+<form method="post">
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+
+    <label asp-for="Event.Title"></label>
+    <input asp-for="Event.Title" />
+
+    <label asp-for="Event.Description"></label>
+    <textarea asp-for="Event.Description" rows="4"></textarea>
+
+    <label asp-for="Event.Venue"></label>
+    <input asp-for="Event.Venue" />
+
+    <label asp-for="Event.EventDate"></label>
+    <input asp-for="Event.EventDate" type="datetime-local" />
+
+    <label asp-for="Event.Capacity"></label>
+    <input asp-for="Event.Capacity" type="number" min="1" />
+
+    <p><button type="submit" class="btn">Create Event</button></p>
+</form>
+
+<a asp-page="Index">Back to events</a>

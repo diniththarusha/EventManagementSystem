@@ -1,0 +1,112 @@
+@page "{eventId:int}"
+@model EventManagementSystem.Pages.Registrations.AttendeesModel
+@{
+    ViewData["Title"] = "Attendees - " + Model.Event.Title;
+}
+
+<h1>Attendees — @Model.Event.Title</h1>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p style="padding:10px; background:#d4edda; border-radius:4px;">@Model.Message</p>
+}
+
+<h2>Scan QR ticket</h2>
+<div id="reader" style="max-width:400px;"></div>
+
+<form method="post" asp-page-handler="Scan" id="scanForm">
+    <input type="hidden" name="eventId" value="@Model.Event.EventId" />
+    <input type="hidden" name="token" id="scannedToken" />
+</form>
+
+<h2>Or find an attendee</h2>
+<form method="get">
+    <input type="hidden" name="eventId" value="@Model.Event.EventId" />
+    <label for="search">Search by name or email</label>
+    <input type="text" id="search" name="search" value="@Model.Search" />
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var r in Model.Registrations)
+    {
+        <tr>
+            <td>@r.AttendeeName</td>
+            <td>@r.AttendeeEmail</td>
+            <td>
+                @if (r.IsCheckedIn)
+                {
+                    <span class="badge badge-checked-in">Checked in</span>
+                }
+                else if (r.Status == "Waitlisted")
+                {
+                    <span class="badge badge-waitlisted">Waitlisted</span>
+                }
+                else
+                {
+                    <span class="badge badge-registered">Registered</span>
+                }
+            </td>
+            <td>
+                @if (!r.IsCheckedIn)
+                {
+                    <form method="post" asp-page-handler="CheckIn" style="display:inline;">
+                        <input type="hidden" name="registrationId" value="@r.RegistrationId" />
+                        <input type="hidden" name="eventId" value="@Model.Event.EventId" />
+                        <button type="submit" class="btn">Check in</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary show-qr" data-token="@r.QrToken">Show QR</button>
+                    <div class="qr-code" data-token="@r.QrToken" style="display:none; margin-top:8px;"></div>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a asp-page="/Events/Details" asp-route-id="@Model.Event.EventId">Back to event</a>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+    // Camera-based scanner — on a successful read, fills the hidden form and submits it
+    const html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 220 },
+        (decodedText) => {
+            html5QrCode.stop().then(() => {
+                document.getElementById("scannedToken").value = decodedText;
+                document.getElementById("scanForm").submit();
+            });
+        },
+        () => { /* ignore per-frame scan failures */ }
+    ).catch((err) => {
+        console.warn("Camera unavailable:", err);
+    });
+
+    // Lost-QR fallback — re-render a registrant's QR on demand for re-scanning
+    document.querySelectorAll('.show-qr').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const container = btn.nextElementSibling;
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                if (!container.dataset.rendered) {
+                    new QRCode(container, { text: btn.dataset.token, width: 120, height: 120 });
+                    container.dataset.rendered = "true";
+                }
+            } else {
+                container.style.display = 'none';
+            }
+        });
+    });
+</script>

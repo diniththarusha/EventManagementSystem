@@ -1,0 +1,16 @@
+@page "{id:int}"
+@model EventManagementSystem.Pages.Events.DeleteModel
+@{
+    ViewData["Title"] = "Delete Event";
+}
+
+<h1>Delete Event</h1>
+
+<p>Are you sure you want to delete <strong>@Model.Event.Title</strong>?</p>
+<p>This will also remove all registrations and attendance records tied to this event.</p>
+
+<form method="post">
+    <input type="hidden" asp-for="Event.EventId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-page="Index">Cancel</a>
+</form>

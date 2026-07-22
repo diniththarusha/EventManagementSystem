@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SLIC Life Events</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <span class="brand">SLIC Life Events</span>
+        <nav>
+            <a asp-page="/Events/Index">Events</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-page="/Registrations/MyEvents">My Registrations</a>
+                <a asp-page="/Notifications/Index">Notifications</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-page="/Admin/Dashboard">Dashboard</a>
+                }
+                <span class="nav-user">@User.Identity!.Name</span>
+                <a asp-page="/Account/Logout">Logout</a>
+            }
+            else
+            {
+                <a asp-page="/Account/Login">Login</a>
+                <a asp-page="/Account/Register">Register</a>
+            }
+        </nav>
+    </header>
+
+    <main class="container">
+        @RenderBody()
+    </main>
+</body>
+</html>

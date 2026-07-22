@@ -1,0 +1,51 @@
+@page
+@model EventManagementSystem.Pages.Registrations.MyEventsModel
+@{
+    ViewData["Title"] = "My Registrations";
+}
+
+<h1>My Registrations</h1>
+
+@if (!Model.Registrations.Any())
+{
+    <p>You haven't registered for any events yet. <a asp-page="/Events/Index">Browse events</a>.</p>
+}
+
+@foreach (var r in Model.Registrations)
+{
+    <div class="panel">
+        <h3>@r.EventTitle</h3>
+        <p>
+            Status:
+            @if (r.Status == "Registered")
+            {
+                <span class="badge badge-registered">Registered</span>
+            }
+            else if (r.Status == "Waitlisted")
+            {
+                <span class="badge badge-waitlisted">Waitlisted</span>
+            }
+            else
+            {
+                <span>@r.Status</span>
+            }
+            @if (r.IsCheckedIn)
+            {
+                <span class="badge badge-checked-in">Checked in</span>
+            }
+        </p>
+
+        @if (r.Status == "Registered" && !r.IsCheckedIn)
+        {
+            <p>Show this QR code at check-in:</p>
+            <div class="qr-code" data-token="@r.QrToken"></div>
+        }
+    </div>
+}
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+    document.querySelectorAll('.qr-code').forEach(function (el) {
+        new QRCode(el, { text: el.dataset.token, width: 160, height: 160 });
+    });
+</script>
