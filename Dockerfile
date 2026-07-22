@@ -10,8 +10,10 @@ RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 COPY --from=build /app .
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "EventManagementSystem.dll"]
+ENTRYPOINT ["./entrypoint.sh"]
