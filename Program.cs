@@ -1,6 +1,9 @@
 using EventManagementSystem.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
+// Disable configuration file watching (fixes inotify limit issues)
+Environment.SetEnvironmentVariable("DOTNET_hostBuilder__reloadConfigOnChange", "false");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
