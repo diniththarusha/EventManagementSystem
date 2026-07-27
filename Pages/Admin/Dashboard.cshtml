@@ -30,7 +30,10 @@
     </div>
 </div>
 
-<h2>All Events</h2>
+<div class="section-heading">
+    <h2>All Events</h2>
+    <a class="btn" asp-page="/Events/Create">+ New Event</a>
+</div>
 <table>
     <thead>
         <tr>
@@ -48,9 +51,22 @@
             <td>@e.Title</td>
             <td>@e.EventDate.ToString("dd MMM yyyy, h:mm tt")</td>
             <td>@e.RegisteredCount / @e.Capacity</td>
-            <td>@e.Status</td>
             <td>
-                <a asp-page="/Events/Details" asp-route-id="@e.EventId">View</a> ·
+                @if (e.Status == "Scheduled")
+                {
+                    <span class="badge badge-registered">Scheduled</span>
+                }
+                else if (e.Status == "Cancelled")
+                {
+                    <span class="badge badge-cancelled">Cancelled</span>
+                }
+                else
+                {
+                    <span class="badge badge-completed">Completed</span>
+                }
+            </td>
+            <td class="table-actions">
+                <a asp-page="/Events/Details" asp-route-id="@e.EventId">View</a>
                 <a asp-page="/Registrations/Attendees" asp-route-eventId="@e.EventId">Attendees</a>
             </td>
         </tr>
