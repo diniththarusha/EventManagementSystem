@@ -20,6 +20,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<RegistrationService>();
+builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<NotificationService>();
 
 var app = builder.Build();
