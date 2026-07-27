@@ -4,13 +4,50 @@
     ViewData["Title"] = Model.Event.Title;
 }
 
+<div class="eyebrow">SLIC Life</div>
 <h1>@Model.Event.Title</h1>
 
-<p><strong>Date:</strong> @Model.Event.EventDate.ToString("dd MMM yyyy, h:mm tt")</p>
-<p><strong>Venue:</strong> @Model.Event.Venue</p>
-<p><strong>Capacity:</strong> @Model.Event.RegisteredCount / @Model.Event.Capacity registered</p>
-<p><strong>Status:</strong> @Model.Event.Status</p>
-<p>@Model.Event.Description</p>
+@if (Model.Event.Status == "Cancelled")
+{
+    <div class="notice-banner notice-cancelled">This event has been cancelled. Registered attendees have been notified.</div>
+}
+
+<div class="panel">
+    <div class="detail-row">
+        <span class="detail-label">Date</span>
+        <span class="detail-value">@Model.Event.EventDate.ToString("dd MMM yyyy, h:mm tt")</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Venue</span>
+        <span class="detail-value">@Model.Event.Venue</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Capacity</span>
+        <span class="detail-value">@Model.Event.RegisteredCount / @Model.Event.Capacity registered</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="detail-value">
+            @if (Model.Event.Status == "Scheduled")
+            {
+                <span class="badge badge-registered">Scheduled</span>
+            }
+            else if (Model.Event.Status == "Cancelled")
+            {
+                <span class="badge badge-cancelled">Cancelled</span>
+            }
+            else
+            {
+                <span class="badge badge-completed">Completed</span>
+            }
+        </span>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Event.Description))
+    {
+        <p class="detail-description">@Model.Event.Description</p>
+    }
+</div>
 
 @if (!User.Identity!.IsAuthenticated)
 {
@@ -45,11 +82,11 @@ else
 
 @if (User.IsInRole("Admin"))
 {
-    <p>
+    <div class="action-row">
         <a class="btn" asp-page="Edit" asp-route-id="@Model.Event.EventId">Edit</a>
         <a class="btn btn-danger" asp-page="Delete" asp-route-id="@Model.Event.EventId">Delete</a>
         <a class="btn btn-secondary" asp-page="/Registrations/Attendees" asp-route-eventId="@Model.Event.EventId">View Attendees</a>
-    </p>
+    </div>
 }
 
-<a asp-page="Index">Back to events</a>
+<p style="margin-top: 20px;"><a asp-page="Index">Back to events</a></p>
