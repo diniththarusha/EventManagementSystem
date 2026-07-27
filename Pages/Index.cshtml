@@ -1,10 +1,55 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero">
+    <div class="eyebrow">SLIC Life</div>
+    <h1>Events, made effortless</h1>
+    <p>Register in a tap, get a QR ticket, and skip the check-in queue — one place for every SLIC Life event.</p>
+
+    <div class="hero-actions">
+        <a class="btn" asp-page="/Events/Index">Browse Events</a>
+        @if (!User.Identity!.IsAuthenticated)
+        {
+            <a class="btn btn-secondary" asp-page="/Account/Login">Log In</a>
+        }
+        else if (User.IsInRole("Admin"))
+        {
+            <a class="btn btn-secondary" asp-page="/Admin/Dashboard">Admin Dashboard</a>
+        }
+        else
+        {
+            <a class="btn btn-secondary" asp-page="/Registrations/MyEvents">My Registrations</a>
+        }
+    </div>
+</div>
+
+<div class="section-heading">
+    <h2>Upcoming Events</h2>
+    <a asp-page="/Events/Index">View all &rarr;</a>
+</div>
+
+@if (!Model.UpcomingEvents.Any())
+{
+    <p>No upcoming events right now — check back soon.</p>
+}
+
+<div class="ticket-grid">
+@foreach (var e in Model.UpcomingEvents)
+{
+    <a class="ticket" asp-page="/Events/Details" asp-route-id="@e.EventId">
+        <div class="ticket-main">
+            <div class="ticket-title">@e.Title</div>
+            <div class="ticket-meta">@e.EventDate.ToString("dd MMM yyyy, h:mm tt")</div>
+            <div class="ticket-meta">@e.Venue</div>
+        </div>
+        <div class="ticket-perf"></div>
+        <div class="ticket-stub">
+            <span class="capacity">@e.RegisteredCount / @e.Capacity registered</span>
+            <span class="badge badge-registered">Scheduled</span>
+        </div>
+    </a>
+}
 </div>
