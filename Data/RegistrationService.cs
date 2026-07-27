@@ -251,6 +251,97 @@ public class RegistrationService
         return null;
     }
 
+    /// <summary>Number of active ("Registered") registrations for an event.</summary>
+    public async Task<int> GetActiveCountAsync(int eventId)
+    {
+        using var conn = new OracleConnection(_connectionString);
+        await conn.OpenAsync();
+
+        using var cmd = new OracleCommand(
+            "SELECT COUNT(*) FROM registrations WHERE event_id = :eventId AND status = 'Registered'", conn);
+        cmd.Parameters.Add(new OracleParameter("eventId", eventId));
+
+        return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+    }
+
+    /// <summary>
+    /// Promotes the oldest waitlisted registrations for an event up to the given capacity.
+    /// Call this after a capacity increase. Returns the registrations that were promoted
+    /// (with user_id populated) so the caller can notify those attendees.
+    /// </summary>
+    public async Task<List<Registration>> PromoteWaitlistedAsync(int eventId, int capacity)
+    {
+        var promoted = new List<Registration>();
+
+        using var conn = new OracleConnection(_connectionString);
+        await conn.OpenAsync();
+
+        var activeCount = await GetActiveCountAsync(eventId);
+        var freeSlots = capacity - activeCount;
+        if (freeSlots <= 0)
+        {
+            return promoted;
+        }
+
+        using var selectCmd = new OracleCommand(
+            @"SELECT registration_id, user_id FROM registrations
+              WHERE event_id = :eventId AND status = 'Waitlisted'
+              ORDER BY registered_at
+              FETCH FIRST :freeSlots ROWS ONLY", conn);
+        selectCmd.Parameters.Add(new OracleParameter("eventId", eventId));
+        selectCmd.Parameters.Add(new OracleParameter("freeSlots", freeSlots));
+
+        var toPromote = new List<(int RegId, int UserId)>();
+        using (var reader = await selectCmd.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                toPromote.Add((reader.GetInt32(0), reader.GetInt32(1)));
+            }
+        }
+
+        foreach (var (regId, userId) in toPromote)
+        {
+            using var updateCmd = new OracleCommand(
+                "UPDATE registrations SET status = 'Registered' WHERE registration_id = :id", conn);
+            updateCmd.Parameters.Add(new OracleParameter("id", regId));
+            await updateCmd.ExecuteNonQueryAsync();
+
+            promoted.Add(new Registration { RegistrationId = regId, EventId = eventId, UserId = userId, Status = "Registered" });
+        }
+
+        return promoted;
+    }
+
+    /// <summary>All active (Registered or Waitlisted) registrations for an event — used for notifying attendees of changes.</summary>
+    public async Task<List<Registration>> GetActiveAndWaitlistedByEventAsync(int eventId)
+    {
+        var results = new List<Registration>();
+
+        using var conn = new OracleConnection(_connectionString);
+        await conn.OpenAsync();
+
+        using var cmd = new OracleCommand(
+            @"SELECT registration_id, event_id, user_id, status
+              FROM registrations
+              WHERE event_id = :eventId AND status IN ('Registered', 'Waitlisted')", conn);
+        cmd.Parameters.Add(new OracleParameter("eventId", eventId));
+
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            results.Add(new Registration
+            {
+                RegistrationId = reader.GetInt32(0),
+                EventId = reader.GetInt32(1),
+                UserId = reader.GetInt32(2),
+                Status = reader.GetString(3)
+            });
+        }
+
+        return results;
+    }
+
     /// <summary>Marks a registration as attended. Safe to call twice — second call is a no-op.</summary>
     public async Task<bool> CheckInAsync(int registrationId, string checkedInVia)
     {
