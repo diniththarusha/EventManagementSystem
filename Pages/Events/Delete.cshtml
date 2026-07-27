@@ -4,13 +4,17 @@
     ViewData["Title"] = "Delete Event";
 }
 
+<div class="eyebrow">SLIC Life</div>
 <h1>Delete Event</h1>
 
-<p>Are you sure you want to delete <strong>@Model.Event.Title</strong>?</p>
-<p>This will also remove all registrations and attendance records tied to this event.</p>
+<div class="notice-banner notice-warning">
+    Are you sure you want to delete <strong>@Model.Event.Title</strong>? This will also remove all registrations and attendance records tied to this event. This can't be undone.
+</div>
 
 <form method="post">
     <input type="hidden" asp-for="Event.EventId" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-page="Index">Cancel</a>
+    <div class="action-row">
+        <button type="submit" class="btn btn-danger">Delete Event</button>
+        <a class="btn btn-secondary" asp-page="Index">Cancel</a>
+    </div>
 </form>
