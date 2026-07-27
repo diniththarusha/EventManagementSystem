@@ -164,6 +164,52 @@ public class RegistrationService
         return results;
     }
 
+    /// <summary>
+    /// All registrations for an event with full attendance detail (check-in time and method) — used for the CSV export.
+    /// NOTE: assumes the attendance table has a checked_in_at timestamp column alongside checked_in_via;
+    /// adjust the column name below if yours differs.
+    /// </summary>
+    public async Task<List<Registration>> GetAttendanceExportAsync(int eventId)
+    {
+        var results = new List<Registration>();
+
+        using var conn = new OracleConnection(_connectionString);
+        await conn.OpenAsync();
+
+        using var cmd = new OracleCommand(
+            @"SELECT r.registration_id, r.event_id, r.user_id, r.status, r.qr_token, r.registered_at,
+                     u.full_name, u.email,
+                     CASE WHEN a.attendance_id IS NOT NULL THEN 1 ELSE 0 END AS checked_in,
+                     a.checked_in_at, a.checked_in_via
+              FROM registrations r
+              JOIN users u ON u.user_id = r.user_id
+              LEFT JOIN attendance a ON a.registration_id = r.registration_id
+              WHERE r.event_id = :eventId
+              ORDER BY u.full_name", conn);
+        cmd.Parameters.Add(new OracleParameter("eventId", eventId));
+
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            results.Add(new Registration
+            {
+                RegistrationId = reader.GetInt32(0),
+                EventId = reader.GetInt32(1),
+                UserId = reader.GetInt32(2),
+                Status = reader.GetString(3),
+                QrToken = reader.GetString(4),
+                RegisteredAt = reader.GetDateTime(5),
+                AttendeeName = reader.GetString(6),
+                AttendeeEmail = reader.GetString(7),
+                IsCheckedIn = reader.GetInt32(8) == 1,
+                CheckedInAt = reader.IsDBNull(9) ? null : reader.GetDateTime(9),
+                CheckedInVia = reader.IsDBNull(10) ? null : reader.GetString(10)
+            });
+        }
+
+        return results;
+    }
+
     public async Task<Registration?> GetByQrTokenAsync(string qrToken)
     {
         using var conn = new OracleConnection(_connectionString);
