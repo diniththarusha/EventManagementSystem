@@ -194,6 +194,8 @@ form input:focus, form select:focus, form textarea:focus { outline: 2px solid va
 .badge-registered { background: #E3F3E9; color: var(--green); }
 .badge-waitlisted { background: #FBF0D9; color: #8A6A15; }
 .badge-checked-in { background: #E2EEF0; color: var(--teal); }
+.badge-cancelled { background: #F6E1DC; color: var(--coral); }
+.badge-completed { background: #E2EEF0; color: var(--teal); }
 
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 24px 0; }
 .stat-card { background: var(--card); border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(18,23,43,0.08); border-top: 3px solid var(--gold); }
@@ -204,3 +206,13 @@ form input:focus, form select:focus, form textarea:focus { outline: 2px solid va
 .panel.unread { border-left: 4px solid var(--gold); }
 .panel h3 { margin: 0 0 8px; }
 
+.notice-banner { padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px; }
+.notice-banner.notice-cancelled { background: #F6E1DC; color: var(--coral); }
+.notice-banner.notice-info { background: #E2EEF0; color: var(--teal); }
+
+.detail-row { display: flex; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: var(--text-muted); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.03em; width: 110px; flex-shrink: 0; padding-top: 2px; }
+.detail-value { color: var(--text); }
+.detail-description { margin-top: 16px; color: var(--text); line-height: 1.6; }
+.action-row { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
