@@ -6,6 +6,8 @@
 
 <h1>Attendees — @Model.Event.Title</h1>
 
+<p><a class="btn" asp-page-handler="ExportCsv" asp-route-eventId="@Model.Event.EventId">Export attendance CSV</a></p>
+
 @if (!string.IsNullOrEmpty(Model.Message))
 {
     <p style="padding:10px; background:#d4edda; border-radius:4px;">@Model.Message</p>
