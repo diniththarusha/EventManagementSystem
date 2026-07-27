@@ -4,18 +4,23 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="eyebrow">SLIC Life</div>
+        <h1>Welcome back</h1>
 
-<form method="post">
-    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+        <form method="post">
+            <div asp-validation-summary="All" class="validation-summary-errors"></div>
 
-    <label asp-for="Email"></label>
-    <input asp-for="Email" />
+            <label asp-for="Email"></label>
+            <input asp-for="Email" />
 
-    <label asp-for="Password"></label>
-    <input asp-for="Password" type="password" />
+            <label asp-for="Password"></label>
+            <input asp-for="Password" type="password" />
 
-    <p><button type="submit" class="btn">Login</button></p>
-</form>
+            <button type="submit" class="btn">Log In</button>
+        </form>
 
-<p>No account? <a asp-page="Register">Register here</a></p>
+        <p class="auth-footer">No account? <a asp-page="Register">Register here</a></p>
+    </div>
+</div>
