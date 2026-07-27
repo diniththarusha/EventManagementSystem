@@ -97,6 +97,9 @@ EventManagementSystem/
 - No automated tests
 - Password hashing is unsalted SHA-256, matching this author's earlier CRMConnect project; a production system should use a per-user salt or a purpose-built algorithm (BCrypt/PBKDF2)
 
+## Available at ## 
+URL : https://eventmanagementsystem-v8l8.onrender.com 
+
 ## Author
 
 **Dinith Tharusha**
