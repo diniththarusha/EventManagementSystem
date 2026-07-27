@@ -6,14 +6,23 @@ namespace EventManagementSystem.Data;
 public class NotificationService
 {
     private readonly string _connectionString;
+    private readonly UserService _userService;
+    private readonly EmailService _emailService;
 
-    public NotificationService(IConfiguration config)
+    public NotificationService(IConfiguration config, UserService userService, EmailService emailService)
     {
         _connectionString = config.GetConnectionString("OracleTest")
             ?? throw new InvalidOperationException("OracleTest connection string is missing.");
+        _userService = userService;
+        _emailService = emailService;
     }
 
-    public async Task CreateAsync(int userId, string message)
+    /// <summary>
+    /// Creates the existing in-app notification, and also emails the user the same message
+    /// (best-effort — a failed email never blocks the in-app notification or the calling page).
+    /// Pass emailSubject to override the default subject line.
+    /// </summary>
+    public async Task CreateAsync(int userId, string message, string emailSubject = "SLIC Life Events — Notification")
     {
         using var conn = new OracleConnection(_connectionString);
         await conn.OpenAsync();
@@ -25,6 +34,12 @@ public class NotificationService
         cmd.Parameters.Add(new OracleParameter("message", message));
 
         await cmd.ExecuteNonQueryAsync();
+
+        var user = await _userService.GetByIdAsync(userId);
+        if (user is not null)
+        {
+            await _emailService.SendAsync(user.Email, user.FullName, emailSubject, message);
+        }
     }
 
     public async Task<List<Notification>> GetByUserAsync(int userId)
