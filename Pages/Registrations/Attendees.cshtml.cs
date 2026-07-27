@@ -95,6 +95,44 @@ public class AttendeesModel : PageModel
         return RedirectToPage(new { eventId });
     }
 
+    public async Task<IActionResult> OnGetExportCsvAsync(int eventId)
+    {
+        var ev = await _eventService.GetByIdAsync(eventId);
+        if (ev is null)
+        {
+            return RedirectToPage("/Events/Index");
+        }
+
+        var registrations = await _registrationService.GetAttendanceExportAsync(eventId);
+
+        var csv = new System.Text.StringBuilder();
+        csv.AppendLine("Name,Email,Status,Registered At,Checked In,Checked In At,Checked In Via");
+
+        foreach (var r in registrations)
+        {
+            csv.AppendLine(string.Join(",",
+                CsvEscape(r.AttendeeName),
+                CsvEscape(r.AttendeeEmail),
+                CsvEscape(r.Status),
+                CsvEscape(r.RegisteredAt.ToString("yyyy-MM-dd HH:mm")),
+                CsvEscape(r.IsCheckedIn ? "Yes" : "No"),
+                CsvEscape(r.CheckedInAt?.ToString("yyyy-MM-dd HH:mm") ?? ""),
+                CsvEscape(r.CheckedInVia ?? "")));
+        }
+
+        var bytes = System.Text.Encoding.UTF8.GetBytes(csv.ToString());
+        var safeTitle = string.Join("_", ev.Title.Split(Path.GetInvalidFileNameChars()));
+        return File(bytes, "text/csv", $"{safeTitle}-attendance.csv");
+    }
+
+    private static string CsvEscape(string? value)
+    {
+        value ??= "";
+        return value.Contains(',') || value.Contains('"') || value.Contains('\n')
+            ? $"\"{value.Replace("\"", "\"\"")}\""
+            : value;
+    }
+
     private async Task NotifyCheckedInAsync(int registrationId, int eventId)
     {
         var registration = await _registrationService.GetByRegistrationIdAsync(registrationId);
