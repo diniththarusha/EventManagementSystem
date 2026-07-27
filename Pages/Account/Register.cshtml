@@ -4,21 +4,26 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>Register</h1>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="eyebrow">SLIC Life</div>
+        <h1>Create your account</h1>
 
-<form method="post">
-    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+        <form method="post">
+            <div asp-validation-summary="All" class="validation-summary-errors"></div>
 
-    <label asp-for="FullName"></label>
-    <input asp-for="FullName" />
+            <label asp-for="FullName"></label>
+            <input asp-for="FullName" />
 
-    <label asp-for="Email"></label>
-    <input asp-for="Email" />
+            <label asp-for="Email"></label>
+            <input asp-for="Email" />
 
-    <label asp-for="Password"></label>
-    <input asp-for="Password" type="password" />
+            <label asp-for="Password"></label>
+            <input asp-for="Password" type="password" />
 
-    <p><button type="submit" class="btn">Create account</button></p>
-</form>
+            <button type="submit" class="btn">Create account</button>
+        </form>
 
-<p>Already have an account? <a asp-page="Login">Login here</a></p>
+        <p class="auth-footer">Already have an account? <a asp-page="Login">Login here</a></p>
+    </div>
+</div>
