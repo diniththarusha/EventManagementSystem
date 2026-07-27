@@ -14,4 +14,6 @@ public class Registration
     public string? AttendeeName { get; set; }
     public string? AttendeeEmail { get; set; }
     public bool IsCheckedIn { get; set; }
+    public DateTime? CheckedInAt { get; set; }
+    public string? CheckedInVia { get; set; }
 }
