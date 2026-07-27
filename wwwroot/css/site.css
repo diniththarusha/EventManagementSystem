@@ -254,3 +254,16 @@ form input:focus, form select:focus, form textarea:focus { outline: 2px solid va
 .detail-value { color: var(--text); }
 .detail-description { margin-top: 16px; color: var(--text); line-height: 1.6; }
 .action-row { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+.notice-banner.notice-success { background: #E3F3E9; color: var(--green); }
+.notice-banner.notice-warning { background: #FBF0D9; color: #8A6A15; }
+
+.auth-wrapper { display: flex; justify-content: center; padding-top: 24px; }
+.auth-card { background: var(--card); border-radius: 12px; box-shadow: 0 1px 3px rgba(18,23,43,0.08), 0 1px 2px rgba(18,23,43,0.06); padding: 34px 36px; width: 100%; max-width: 380px; border-top: 3px solid var(--gold); }
+.auth-card h1 { text-align: center; margin-bottom: 4px; }
+.auth-card .eyebrow { justify-content: center; display: flex; }
+.auth-card form input, .auth-card form select, .auth-card form textarea { max-width: 100%; }
+.auth-card .btn { width: 100%; text-align: center; margin-top: 20px; }
+.auth-footer { text-align: center; margin-top: 18px; font-size: 0.9rem; color: var(--text-muted); }
+
+.table-actions a { margin-right: 12px; font-size: 0.88rem; font-weight: 500; }
